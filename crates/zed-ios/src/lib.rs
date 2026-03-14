@@ -6,18 +6,17 @@
 //!
 //! See: docs/ios-port-plan.md for full architecture details.
 
-// Phase 0: Minimal entry point that proves the build pipeline works.
-// Phase 1+: Initialize GPUI with IosPlatform, create windows, etc.
-
 /// Main entry point called by AppDelegate.swift after UIApplicationMain.
 ///
 /// # Safety
 /// Called from Swift via C FFI. Must be called exactly once on the main thread.
 #[unsafe(no_mangle)]
 pub extern "C" fn zed_ios_main() {
-    // TODO Phase 0: Just prove this gets called without crashing.
-    // TODO Phase 1: Initialize GPUI with IosPlatform, start the async executor.
-    // TODO Phase 2: Show the connection manager UI.
+    // Initialize GPUI with the iOS platform and run the application.
+    let app = gpui_platform::application();
+    app.run(|_cx| {
+        // TODO Phase 2: Show the connection manager UI.
+    });
 }
 
 /// Called by SceneDelegate.swift when a new UIWindowScene activates.
@@ -26,7 +25,7 @@ pub extern "C" fn zed_ios_main() {
 /// Called from Swift via C FFI. `scene_id` must be a valid null-terminated UTF-8 string.
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn zed_ios_open_window(_scene_id: *const std::ffi::c_char) {
-    // TODO Phase 1: Create a new GPUI window backed by the UIWindowScene.
+    // TODO Phase 2: Create a new GPUI window backed by the UIWindowScene.
     // TODO Phase 4: State restoration — reconnect to the right host/directory.
 }
 

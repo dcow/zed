@@ -34,6 +34,11 @@ pub fn web_init() {
 
 /// Returns the default [`Platform`] for the current OS.
 pub fn current_platform(headless: bool) -> Rc<dyn Platform> {
+    #[cfg(target_os = "ios")]
+    {
+        Rc::new(gpui_ios::IosPlatform::new(headless))
+    }
+
     #[cfg(target_os = "macos")]
     {
         Rc::new(gpui_macos::MacPlatform::new(headless))

@@ -16,7 +16,7 @@ default = []
 font-kit = ["gpui_macos/font-kit"]
 test-support = ["gpui/test-support", "gpui_macos/test-support"]
 screen-capture = ["gpui/screen-capture", "gpui_macos/screen-capture", "gpui_windows/screen-capture", "gpui_linux/screen-capture"]
-runtime_shaders = ["gpui_macos/runtime_shaders"]
+runtime_shaders = ["gpui_macos/runtime_shaders", "gpui_ios/runtime_shaders"]
 wayland = ["gpui_linux/wayland"]
 x11 = ["gpui_linux/x11"]
 
@@ -31,6 +31,9 @@ gpui_windows.workspace = true
 
 [target.'cfg(any(target_os = "linux", target_os = "freebsd"))'.dependencies]
 gpui_linux.workspace = true
+
+[target.'cfg(target_os = "ios")'.dependencies]
+gpui_ios.workspace = true
 
 [target.'cfg(target_family = "wasm")'.dependencies]
 gpui_web.workspace = true
