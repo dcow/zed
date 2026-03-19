@@ -22124,6 +22124,7 @@ dependencies = [
  "anyhow",
  "assets",
  "client",
+ "editor",
  "env_logger 0.11.8",
  "fs",
  "futures 0.3.31",
