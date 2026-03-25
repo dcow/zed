@@ -8102,12 +8102,6 @@ impl Render for Workspace {
                                     let this = cx.entity();
                                     canvas(
                                         move |bounds, window, cx| {
-                                            #[cfg(target_os = "ios")]
-                                            log::info!(
-                                                "[workspace] canvas bounds: origin={:?}, size={:?}",
-                                                bounds.origin,
-                                                bounds.size,
-                                            );
                                             this.update(cx, |this, cx| {
                                                 let bounds_changed = this.bounds != bounds;
                                                 this.bounds = bounds;
