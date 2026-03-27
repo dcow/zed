@@ -23355,6 +23355,8 @@ dependencies = [
  "theme_selector",
  "ui",
  "util",
+ "vim",
+ "vim_mode_setting",
  "workspace",
  "zed_actions",
 ]
