@@ -971,6 +971,9 @@ impl Domain for WorkspaceDb {
         sql!(
             ALTER TABLE remote_connections ADD COLUMN use_podman BOOLEAN;
         ),
+        sql!(
+            ALTER TABLE workspaces ADD COLUMN active_profile TEXT DEFAULT NULL;
+        ),
     ];
 
     // Allow recovering from bad migration that was initially shipped to nightly
@@ -1046,6 +1049,7 @@ impl WorkspaceDb {
             centered_layout,
             docks,
             window_id,
+            active_profile,
         ): (
             WorkspaceId,
             String,
@@ -1055,6 +1059,7 @@ impl WorkspaceDb {
             Option<bool>,
             DockStructure,
             Option<u64>,
+            Option<String>,
         ) = self
             .select_row_bound(sql! {
                 SELECT
@@ -1077,7 +1082,8 @@ impl WorkspaceDb {
                     bottom_dock_visible,
                     bottom_dock_active_panel,
                     bottom_dock_zoom,
-                    window_id
+                    window_id,
+                    active_profile
                 FROM workspaces
                 WHERE
                     paths IS ? AND
@@ -1123,6 +1129,7 @@ impl WorkspaceDb {
             display,
             docks,
             session_id: None,
+            active_profile,
             breakpoints: self.breakpoints(workspace_id),
             window_id,
             user_toolchains: self.user_toolchains(workspace_id, remote_connection_id),
@@ -1143,6 +1150,7 @@ impl WorkspaceDb {
             docks,
             window_id,
             remote_connection_id,
+            active_profile,
         ): (
             String,
             String,
@@ -1152,6 +1160,7 @@ impl WorkspaceDb {
             DockStructure,
             Option<u64>,
             Option<i32>,
+            Option<String>,
         ) = self
             .select_row_bound(sql! {
                 SELECT
@@ -1174,7 +1183,8 @@ impl WorkspaceDb {
                     bottom_dock_active_panel,
                     bottom_dock_zoom,
                     window_id,
-                    remote_connection_id
+                    remote_connection_id,
+                    active_profile
                 FROM workspaces
                 WHERE workspace_id = ?
             })
@@ -1213,6 +1223,7 @@ impl WorkspaceDb {
             display,
             docks,
             session_id: None,
+            active_profile,
             breakpoints: self.breakpoints(workspace_id),
             window_id,
             user_toolchains: self.user_toolchains(workspace_id, remote_connection_id),
@@ -1453,9 +1464,10 @@ impl WorkspaceDb {
                         bottom_dock_zoom,
                         session_id,
                         window_id,
+                        active_profile,
                         timestamp
                     )
-                    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, CURRENT_TIMESTAMP)
+                    VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9, ?10, ?11, ?12, ?13, ?14, ?15, ?16, CURRENT_TIMESTAMP)
                     ON CONFLICT DO
                     UPDATE SET
                         paths = ?2,
@@ -1472,6 +1484,7 @@ impl WorkspaceDb {
                         bottom_dock_zoom = ?13,
                         session_id = ?14,
                         window_id = ?15,
+                        active_profile = ?16,
                         timestamp = CURRENT_TIMESTAMP
                 );
                 let mut prepared_query = conn.exec_bound(query)?;
@@ -1483,6 +1496,7 @@ impl WorkspaceDb {
                     workspace.docks,
                     workspace.session_id,
                     workspace.window_id,
+                    workspace.active_profile,
                 );
 
                 prepared_query(args).context("Updating workspace")?;
